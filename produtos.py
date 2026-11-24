@@ -2,10 +2,11 @@
 Semana 1 — Modelando produtos (Orientação a Objetos)
 
 Complete os trechos marcados com TODO.
+
 Não altere os nomes das classes, métodos e constantes: a correção é automática.
 """
 
-ALIQUOTA_PADRAO = 0.25  # alíquota padrão hipotética (IBS + CBS)
+ALIQUOTA_PADRAO = 0.25  
 
 
 class Produto:
@@ -13,67 +14,66 @@ class Produto:
 
     def __init__(self, nome: str, preco: float):
         self.nome = nome
-        # TODO: atribua o preço usando a property (self.preco = preco),
-        #       para que a validação do setter também valha na criação.
-        pass
+        self.preco = preco
 
     @property
     def preco(self) -> float:
         """Preço do produto SEM imposto."""
-        # TODO: retorne o atributo protegido (ex.: self._preco)
-        pass
+        return self._preco
 
     @preco.setter
     def preco(self, valor: float) -> None:
-        # TODO: lance ValueError se o valor for negativo;
-        #       caso contrário, guarde em self._preco
-        pass
+        if valor < 0:
+            raise ValueError("O preço não pode ser negativo.")
+        self._preco = valor
 
     def aliquota(self) -> float:
         """Cada subclasse define sua própria alíquota."""
-        # TODO: lance NotImplementedError (a classe base não tem alíquota)
-        pass
+        raise NotImplementedError(
+            "A classe base Produto não possui alíquota; use uma subclasse."
+        )
 
     def imposto(self) -> float:
         """Imposto de UMA unidade: round(preco * aliquota, 2)."""
-        # TODO
-        pass
+        return round(self.preco * self.aliquota(), 2)
 
     def preco_final(self) -> float:
         """Preço + imposto, arredondado em 2 casas."""
-        # TODO
-        pass
+        return round(self.preco + self.imposto(), 2)
 
     def __str__(self) -> str:
         """Formato: 'Arroz 5kg - R$ 25.90 (imposto: R$ 0.00)'"""
-        # TODO: use f-string com :.2f
-        pass
+        return f"{self.nome} - R$ {self.preco:.2f} (imposto: R$ {self.imposto():.2f})"
 
 
 class ProdutoCestaBasica(Produto):
     """Item da Cesta Básica Nacional: alíquota zero."""
 
-    # TODO: sobrescreva aliquota() retornando 0.0
-    pass
+    def aliquota(self) -> float:
+        return 0.0
 
 
 class ProdutoReduzido(Produto):
     """Alimento com redução de 60%: paga 40% da alíquota padrão."""
 
-    # TODO: sobrescreva aliquota() usando ALIQUOTA_PADRAO
-    pass
+    def aliquota(self) -> float:
+        return 0.4 * ALIQUOTA_PADRAO
 
 
 class ProdutoPadrao(Produto):
     """Produto sem benefício: paga a alíquota padrão."""
 
-    # TODO: sobrescreva aliquota() retornando ALIQUOTA_PADRAO
-    pass
+    def aliquota(self) -> float:
+        return ALIQUOTA_PADRAO
 
 
 if __name__ == "__main__":
     # Área livre para testes manuais
     arroz = ProdutoCestaBasica("Arroz 5kg", 25.90)
+    feijao = ProdutoCestaBasica("Feijão 1kg", 8.00)
+    leite = ProdutoCestaBasica("Leite 1L", 5.50)
     refri = ProdutoPadrao("Refrigerante 2L", 9.00)
     print(arroz)
+    print(feijao)
+    print(leite)
     print(refri)
